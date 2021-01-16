@@ -1,89 +1,140 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
-      <div class="text-center">
-        <logo />
-        <vuetify-logo />
-      </div>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation
-            </a>.
-          </p>
-          <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord
-            </a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board
-            </a>.
-          </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            nuxt
-            to="/inspire"
-          >
-            Continue
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
+	<div class="container" style="padding: 80px 10px;display: flex">
+		<v-row justify="center" align="top">
+			<v-col cols="12" sm="6" md="4">
+				<h3>
+					IP Status
+					<v-chip class="ma-2" :color="networkStatus.color" small>
+						<v-icon small left>{{networkStatus.icon}}</v-icon>
+						{{networkStatus.status}}
+					</v-chip>
+				</h3>
+				<span class="text--disabled">{{latestUploaded}}</span>
+				<v-card>
+					<v-card-title>{{networkStatus.currentIP}}</v-card-title>
+					<v-card-subtitle>Current IP</v-card-subtitle>
+				</v-card>
+				<br />
+				<h3>Recording targets</h3>
+				<span class="text--disabled">{{latestUploaded}}</span>
+				<v-card>
+					<v-simple-table>
+						<template v-slot:default>
+							<thead>
+								<tr>
+									<th class="text-left">Status</th>
+									<th class="text-left">Channel</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(item,i) in recordingTargets" :key="i">
+									<td width="1.2em">{{ item.status }}</td>
+									<td>{{ item.channel }}</td>
+								</tr>
+							</tbody>
+						</template>
+					</v-simple-table>
+				</v-card>
+			</v-col>
+			<v-col cols="12" sm="6" md="8">
+				<h3>Ongoing Records</h3>
+				<span class="text--disabled">{{latestUploaded}}</span>
+				<v-row justify="left" align="top">
+					<v-col cols="6" sm="12" md="4" v-for="(item,i) in ongoingRecords" :key="i">
+						<v-card>
+							<v-img :aspect-ratio="16/9" :src="item.img"></v-img>
+							<v-card-text>
+								<h2 class="title primary--text">{{item.channel}}</h2>
+								<span>{{item.title}}</span>
+								<br />
+								<span>{{item.time}}</span>
+							</v-card-text>
+						</v-card>
+					</v-col>
+				</v-row>
+			</v-col>
+			<v-col cols="12" sm="12" md="12">
+				<h3>Recent uploads</h3>
+				<span class="text--disabled">{{latestUploaded}}</span>
+				<v-card>
+					<v-simple-table fixed-header height="350px">
+						<template v-slot:default>
+							<thead>
+								<tr>
+									<th class="text-left">Channel</th>
+									<th class="text-left">Title</th>
+									<th class="text-left">SEG</th>
+									<th class="text-left"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(item,i) in recentUploads" :key="i">
+									<td>{{ item.channel }}</td>
+									<td>{{ item.title }}</td>
+									<td>{{ item.seg }}</td>
+									<td width="1.2em">
+										<v-btn icon :to="item.downloadLink">
+											<v-icon small>mdi-download</v-icon>
+										</v-btn>
+									</td>
+								</tr>
+							</tbody>
+						</template>
+					</v-simple-table>
+				</v-card>
+			</v-col>
+		</v-row>
+	</div>
 </template>
 
-<script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
-
+<script> 
 export default {
-  components: {
-    Logo,
-    VuetifyLogo
-  }
+	data: () => ({
+		latestUploaded: "3 minutes ago",
+		networkStatus: {
+			currentIP: "1069:b1b1:1069:::87",
+			status: "Functional",
+			icon: "mdi-checkbox-marked-circle",
+			color: "success",
+		},
+		recentUploads: [
+			{
+				channel: '勝勝',
+				title: '我好可愛',
+				seg: 'HAPPY-1234',
+				downloadLink: '#',
+			},
+		],
+		ongoingRecords: [
+			{
+				img: 'https://i.ytimg.com/vi/YN3ykwU3LTM/maxresdefault.jpg',
+				channel: 'Gawr Gura',
+				title: '勝勝太可愛了該怎麼辦',
+				time: '1:06:09',
+			},
+			{
+				img: 'https://i.ytimg.com/vi/YN3ykwU3LTM/maxresdefault.jpg',
+				channel: 'Gawr Gura',
+				title: '勝勝太可愛了該怎麼辦',
+				time: '1:06:09',
+			},
+			{
+				img: 'https://i.ytimg.com/vi/YN3ykwU3LTM/maxresdefault.jpg',
+				channel: 'Gawr Gura',
+				title: '勝勝太可愛了該怎麼辦',
+				time: '1:06:09',
+			},
+		],
+		recordingTargets: [
+			{
+				status: '❤️',
+				channel: '勝勝',
+			},
+			{
+				status: '🐧',
+				channel: '豪可愛',
+			},
+		],
+	})
 }
 </script>
